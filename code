@@ -1,0 +1,52 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.linear_model import LinearRegression
+
+np.random.seed(1)
+
+# Dataset
+df = pd.DataFrame({
+    "Calories_Intake": np.random.randint(1500, 3000, 50),
+    "Exercise_Time": np.random.randint(10, 120, 50),
+    "Sleep_Hours": np.random.randint(4, 10, 50),
+    "Water_Intake": np.random.randint(1, 5, 50)
+})
+
+# Fitness score
+df["Fitness_Score"] = (
+    df["Exercise_Time"]*2 +
+    df["Sleep_Hours"]*5 +
+    df["Water_Intake"]*10 -
+    df["Calories_Intake"]*0.5
+)
+
+print(df.head())
+
+# Correlation
+corr = df.corr()
+sns.heatmap(corr, annot=True, cmap="coolwarm")
+plt.title("Correlation Heatmap")
+plt.show()
+
+# Regression
+X = df[["Calories_Intake","Exercise_Time","Sleep_Hours","Water_Intake"]]
+y = df["Fitness_Score"]
+
+model = LinearRegression()
+model.fit(X,y)
+
+print("R2 Score:", model.score(X,y))
+
+# Prediction
+new_data = pd.DataFrame([[2000,60,7,3]],
+                        columns=["Calories_Intake","Exercise_Time","Sleep_Hours","Water_Intake"])
+print("Predicted Fitness Score:", model.predict(new_data))
+
+# Visualization
+plt.scatter(df["Exercise_Time"], df["Fitness_Score"])
+plt.xlabel("Exercise Time")
+plt.ylabel("Fitness Score")
+plt.title("Exercise vs Fitness")
+plt.show()
